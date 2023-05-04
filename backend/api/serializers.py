@@ -1,10 +1,8 @@
 import base64
 from django.core.files.base import ContentFile
-from rest_framework.serializers import (BooleanField,
-                                        IntegerField, ModelSerializer,
+from rest_framework.serializers import (ModelSerializer,
                                         PrimaryKeyRelatedField, ReadOnlyField,
                                         SerializerMethodField, ImageField)
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from recipes.models import IngredientInRecipesAmount, Ingredient, Recipe, Tag
 from users.models import User, Follow
@@ -42,6 +40,7 @@ class TagSerializer(ModelSerializer):
             'slug',
         )
 
+
 class UserSerializer(ModelSerializer):
     is_subscribed = SerializerMethodField()
 
@@ -63,6 +62,7 @@ class UserSerializer(ModelSerializer):
             return False
         return user.follower.filter(follower=obj).exists()
 
+
 class UserCreateSerializer(ModelSerializer):
 
     class Meta:
@@ -71,10 +71,12 @@ class UserCreateSerializer(ModelSerializer):
             'email', 'username',
             'first_name', 'last_name', 'password',)
 
+
 class ShoppingListFavoiriteSerializer(ModelSerializer):
     image = Base64ImageField(read_only=True)
     name = ReadOnlyField()
     cooking_time = ReadOnlyField()
+
     class Meta:
         model = Recipe
         fields = (
@@ -128,15 +130,6 @@ class FollowSerializer(ModelSerializer):
             data['recipes'] = data['recipes'][:int(recipes_limit)]
         return data
             
-class IngredientSerializer(ModelSerializer):
-    class Meta:
-        model = Ingredient
-        fields = (
-            'id'
-            'name'
-            'measurement_unit'
-        )
-
 
 class IngredientsInRecipeWriteSerializer(ModelSerializer):
     class Meta:
@@ -145,19 +138,6 @@ class IngredientsInRecipeWriteSerializer(ModelSerializer):
             'id',
             'amount',
         )
-
-
-class TagSerializer(ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = (
-            'id',
-            'name',
-            'color',
-            'slug',
-        )
-
-
 
 
 class RecipesReadSerializer(ModelSerializer):
@@ -188,18 +168,21 @@ class RecipesReadSerializer(ModelSerializer):
             'is_favorited',
             'is_in_shopping_cart',
         )
+
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
         return (
             user.is_authenticated
             and obj.favoirite_recipes.filter(user=user).exists()
         )
+
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
         return (
             user.is_authenticated
             and obj.shopping_recipes.filter(user=user).exists()
         )
+
 
 class RecipesWriteSerializer(ModelSerializer):
     tags = PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
@@ -224,7 +207,10 @@ class RecipesWriteSerializer(ModelSerializer):
         recipe = Recipe.objects.create(author=user, **validated_data)
         recipe.tags.update(tags)
         for ingridient in ingredients:
-            IngredientInRecipesAmount.objects.create(ingridient=ingridient.pop('id'), recipe=recipe, amount=ingridient.pop('amount'))
+            IngredientInRecipesAmount.objects.create(
+                ingridient=ingridient.pop('id'),
+                recipe=recipe,
+                amount=ingridient.pop('amount'))
         return recipe
 
     def update(self, instance, validated_data):
@@ -234,5 +220,8 @@ class RecipesWriteSerializer(ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         instance.ingredients.clear()
         for ingridient in ingredients:
-            IngredientInRecipesAmount.objects.create(ingridient=ingridient.pop('id'), recipe=instance, amount=ingridient.pop('amount'))
+            IngredientInRecipesAmount.objects.create(
+                ingridient=ingridient.pop('id'),
+                recipe=instance,
+                amount=ingridient.pop('amount'))
         return super().update(instance, validated_data)

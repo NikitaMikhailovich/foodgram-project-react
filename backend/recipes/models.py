@@ -29,7 +29,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-    
+
 class Ingredient(models.Model):
     name = models.CharField(
         verbose_name='Ингридиент',
@@ -39,12 +39,12 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
         help_text='Единица измерения количества ингридиента',
-        max_length=200, 
+        max_length=200,
     )
+
     class Meta:
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
-
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -93,7 +93,7 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
-    
+
 
 class IngredientInRecipesAmount(models.Model):
     amount = models.IntegerField(
@@ -113,7 +113,7 @@ class IngredientInRecipesAmount(models.Model):
         verbose_name='Ингредиент',
     )
 
-   
+
 class FavoriteReceipe(models.Model):
     user = models.ForeignKey(
         User,
@@ -138,6 +138,7 @@ class FavoriteReceipe(models.Model):
                 name='favorite_recipe',
             )
         ]
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(

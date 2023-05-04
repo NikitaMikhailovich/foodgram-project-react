@@ -7,28 +7,24 @@ class User(AbstractUser):
         'Адрес электронной почты',
         max_length=254,
         unique=True,
-        blank=False,
         null=False
     )
     username = models.CharField(
         'Юзернейм',
         max_length=150,
         unique=True,
-        blank=False,
         null=False
     )
     first_name = models.CharField(
         'Имя',
         max_length=150,
-        unique=True,
-        blank=False,
+        blank=True,
         null=False
     )
     last_name = models.CharField(
         'Фамилия',
         max_length=150,
-        unique=True,
-        blank=False,
+        blank=True,
         null=False
     )
     password = models.CharField(

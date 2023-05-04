@@ -8,8 +8,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import (IngredientInRecipesAmount, FavoriteReceipe, Ingredient,
-                            Recipe, ShoppingCart, Tag)
+from recipes.models import (IngredientInRecipesAmount, FavoriteReceipe,
+                            Ingredient, Recipe, ShoppingCart, Tag)
 from users.models import Follow, User
 from .filters import RecipeFilter
 from .pagination import LimitPaginator
@@ -25,11 +25,13 @@ class TagsViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+
 class IngredientsViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (filters.SearchFilter, )
     search_fields = ('^name', )
+
 
 class UsersViewSet(UserViewSet):
 
@@ -50,7 +52,6 @@ class UsersViewSet(UserViewSet):
         )
         return self.get_paginated_response(serializer.data)
     
-    
     @action(
         methods=['POST', 'DELETE'], detail=False,
         permission_classes=(IsAuthenticated,),
@@ -69,22 +70,23 @@ class UsersViewSet(UserViewSet):
                 )
                 if serializer.is_valid():
                     serializer.save(user=user, author=author)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED)
         Follow.objects.filter(user=user, author=author).delete()
         return Response('Успешная отписка', status=status.HTTP_204_NO_CONTENT)
-    
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     permission_class = (OwnerOrReadOnly,)
-    pagination_class=LimitPaginator
+    pagination_class = LimitPaginator
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipesReadSerializer
         return RecipesWriteSerializer
-    
 
     @action(
         methods=['POST', 'DELETE'], detail=True,
@@ -121,7 +123,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response(
                     {'errors': 'Рецепт уже удален!'},
                     status=status.HTTP_400_BAD_REQUEST,
-                )   
+                )
+ 
     @action(
         methods=['POST', 'DELETE'], detail=True,
     )
@@ -156,7 +159,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     {'errors': 'Рецепт уже удален!'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
 
     @action(
         methods=['GET'], detail=False,
