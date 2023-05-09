@@ -32,19 +32,19 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(
-        verbose_name='Ингридиент',
-        help_text='Название ингридиента',
+        verbose_name='Ингредиент',
+        help_text='Название ингредиента',
         max_length=200
     )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
-        help_text='Единица измерения количества ингридиента',
+        help_text='Единица измерения количества ингредиента',
         max_length=200,
     )
 
     class Meta:
-        verbose_name = 'Ингридиент'
-        verbose_name_plural = 'Ингридиенты'
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -67,8 +67,8 @@ class Recipe(models.Model):
 
     indgredients = models.ManyToManyField(
         Ingredient,
-        verbose_name='Ингридиенты',
-        help_text='Ингридиенты для приготовления по рецепту',
+        verbose_name='Ингредиенты',
+        help_text='Ингредиенты для приготовления по рецепту',
     )
     name = models.CharField(
         'Название рецепта',
@@ -98,7 +98,7 @@ class Recipe(models.Model):
 class IngredientInRecipesAmount(models.Model):
     amount = models.IntegerField(
         verbose_name='Количество',
-        help_text='Необходимое количество данного ингридиента',
+        help_text='Необходимое количество данного ингредиента',
     )
     recipe = models.ForeignKey(
         Recipe,
@@ -112,6 +112,16 @@ class IngredientInRecipesAmount(models.Model):
         related_name='ingredient',
         verbose_name='Ингредиент',
     )
+
+    class Meta:
+        verbose_name = 'Количество ингредиентов'
+        verbose_name_plural = 'Количество ингредиентов'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='amount_ingredient',
+            )
+        ]
 
 
 class FavoriteReceipe(models.Model):
@@ -130,8 +140,8 @@ class FavoriteReceipe(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Количество ингредиента'
-        verbose_name_plural = 'Количество ингредиентов'
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Рецепты в избранном'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipes'],

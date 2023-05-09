@@ -19,8 +19,6 @@ from .serializers import (ShoppingListFavoiriteSerializer, FollowSerializer,
                           RecipesReadSerializer, TagSerializer, UserSerializer)
 
 
-# Create your views here.
-
 class TagsViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -51,7 +49,7 @@ class UsersViewSet(UserViewSet):
             page, many=True, context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
-    
+
     @action(
         methods=['POST', 'DELETE'], detail=False,
         permission_classes=(IsAuthenticated,),
@@ -60,18 +58,13 @@ class UsersViewSet(UserViewSet):
         user = request.user
         author = get_object_or_404(User, pk=pk)
         if request.method == 'POST':
-            if user.pk == author.pk:
-                return Response(
-                    {'errors': 'Нельзя подписаться на себя!'},
-                    status=status.HTTP_400_BAD_REQUEST)
-            else:
-                serializer = FollowSerializer(
-                    request.data, context={'request': request}
-                )
-                if serializer.is_valid():
-                    serializer.save(user=user, author=author)
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED)
+            serializer = FollowSerializer(
+                request.data, context={'request': request}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(user=user, author=author)
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED)
         Follow.objects.filter(user=user, author=author).delete()
         return Response('Успешная отписка', status=status.HTTP_204_NO_CONTENT)
 
@@ -117,14 +110,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ).exists():
                 FavoriteReceipe.objects.get(
                     user=self.request.user, recipe=recipe
-                ).delete() 
+                ).delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response(
                     {'errors': 'Рецепт уже удален!'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
- 
+
     @action(
         methods=['POST', 'DELETE'], detail=True,
     )
@@ -152,7 +145,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ).exists():
                 ShoppingCart.objects.get(
                     user=self.request.user, recipe=recipe
-                ).delete() 
+                ).delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response(
