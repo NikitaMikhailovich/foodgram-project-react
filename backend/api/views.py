@@ -79,9 +79,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipesReadSerializer
+        print("ALARM"*100)
+        print(self.request)
         return RecipesWriteSerializer
 
-    def post_delete(self, request, pk, model):
+    def post_delete_recipe(self, request, pk, model):
         recipe = get_object_or_404(Recipe, pk=pk)
         user = self.request.user
         if request.method == 'POST':

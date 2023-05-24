@@ -61,7 +61,7 @@ class UserSerializer(ModelSerializer):
         user = self.context.get('request').user
         if user is None or user.is_anonymous:
             return False
-        return user.follower.filter(follower=obj).exists()
+        return user.follower.filter(author=obj).exists()
 
 
 class UserCreateSerializer(ModelSerializer):
@@ -146,6 +146,8 @@ class FollowSerializer(ModelSerializer):
 
 
 class IngredientsInRecipeWriteSerializer(ModelSerializer):
+    id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+
     class Meta:
         model = IngredientInRecipesAmount
         fields = (
@@ -157,14 +159,14 @@ class IngredientsInRecipeWriteSerializer(ModelSerializer):
 class RecipesReadSerializer(ModelSerializer):
     is_favorited = SerializerMethodField(read_only=True)
     is_in_shopping_cart = SerializerMethodField(read_only=True)
-    ingridients = IngredientSerializer(
+    indgredients = IngredientSerializer(
         required=True, many=True
     )
     tags = TagSerializer(
-        required=True, many=True
+        many=True
     )
     author = UserSerializer(
-        required=True
+        read_only=True
     )
     image = Base64ImageField()
 
@@ -174,7 +176,7 @@ class RecipesReadSerializer(ModelSerializer):
             'id',
             'tags',
             'author',
-            'ingridients',
+            'indgredients',
             'name',
             'image',
             'text',
@@ -187,7 +189,7 @@ class RecipesReadSerializer(ModelSerializer):
         user = self.context.get('request').user
         return (
             user.is_authenticated
-            and obj.favoirite_recipes.filter(user=user).exists()
+            and obj.favorite_recipes.filter(user=user).exists()
         )
 
     def get_is_in_shopping_cart(self, obj):
@@ -205,14 +207,16 @@ class RecipesWriteSerializer(ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = (
-            'ingredients'
-            'tags'
-            'image'
-            'name'
-            'text'
-            'cooking_time'
-        )
+        # fields = (
+        #     'ingredients'
+        #     'tags'
+        #     'image'
+        #     'name'
+        #     'text'
+        #     'cooking_time'
+        # )
+        fields = '__all__'
+        read_only_fields = ('author',)
 
     def validate(self, data):
         ingredients = data['ingredients']
@@ -255,6 +259,8 @@ class RecipesWriteSerializer(ModelSerializer):
         )
 
     def create(self, validated_data):
+        print("ALARM"*100)
+        print(validated_data)
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         user = self.context.get('request').user

@@ -47,17 +47,17 @@ class RecipeAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
     def get_in_favorites(self, obj):
-        return obj.favoirite_recipes.count()
+        return obj.favorite_recipes.count()
 
 
 @admin.register(FavoriteReceipe)
 class FavoriteReceipeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipes',)
-    list_filter = ('user', 'recipes',)
+    list_display = ('user', 'recipe',)
+    list_filter = ('user', 'recipe',)
     empty_value_display = '-пусто-'
 
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipes', )
+    list_display = ('user', 'recipe', )
     empty_value_display = '-пусто-'

@@ -92,7 +92,7 @@ class Recipe(models.Model):
         ordering = ['-pub_date']
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class IngredientInRecipesAmount(models.Model):
@@ -128,14 +128,14 @@ class FavoriteReceipe(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='favoirite_user',
+        related_name='favorite_user',
         verbose_name='Пользователь'
     )
 
-    recipes = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='favoirite_recipes',
+        related_name='favorite_recipes',
         verbose_name='Рецепты',
     )
 
@@ -144,7 +144,7 @@ class FavoriteReceipe(models.Model):
         verbose_name_plural = 'Рецепты в избранном'
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'recipes'],
+                fields=['user', 'recipe'],
                 name='favorite_recipe',
             )
         ]
@@ -158,7 +158,7 @@ class ShoppingCart(models.Model):
         verbose_name='Пользователь'
     )
 
-    recipes = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name='shopping_recipes',
@@ -170,7 +170,7 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Списки покупок'
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'recipes'],
+                fields=['user', 'recipe'],
                 name='recipe_in_shopping_cart',
             )
         ]

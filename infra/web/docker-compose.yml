@@ -1,5 +1,3 @@
-version: '3.3'
-
 services:
   db:
     image: postgres:13.0-alpine
@@ -9,22 +7,17 @@ services:
       - ../backend/.env
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: nikitag97/foodgram_backend:latest
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
     depends_on:
       - db
-      - frontend
     env_file:
       - ../backend/.env
    
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: nikitag97/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
     
