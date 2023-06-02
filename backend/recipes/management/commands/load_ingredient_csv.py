@@ -11,6 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         file_name = 'recipes/data/ingredients.csv'
         with open(file_name, 'r', encoding='utf-8') as file:
+            print(file)
             file_reader = csv.reader(file)
             for row in file_reader:
                 name, measurement_unit = row
@@ -22,3 +23,5 @@ class Command(BaseCommand):
                 except IntegrityError:
                     print(f'Ингредиент {name} {measurement_unit}'
                           f' есть в базе')
+
+# python manage.py file_name

@@ -65,10 +65,11 @@ class Recipe(models.Model):
         related_name='recipes'
     )
 
-    indgredients = models.ManyToManyField(
+    ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингредиенты',
         help_text='Ингредиенты для приготовления по рецепту',
+        through='IngredientInRecipesAmount',
     )
     name = models.CharField(
         'Название рецепта',
@@ -78,7 +79,7 @@ class Recipe(models.Model):
         upload_to='recipes/',
     )
     text = models.TextField(
-
+        'Описание рецепта'
     )
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления',
@@ -96,10 +97,7 @@ class Recipe(models.Model):
 
 
 class IngredientInRecipesAmount(models.Model):
-    amount = models.IntegerField(
-        verbose_name='Количество',
-        help_text='Необходимое количество данного ингредиента',
-    )
+    
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -113,13 +111,18 @@ class IngredientInRecipesAmount(models.Model):
         verbose_name='Ингредиент',
     )
 
+    amount = models.PositiveSmallIntegerField(
+        verbose_name='Количество',
+        help_text='Необходимое количество данного ингредиента',
+    )
+
     class Meta:
         verbose_name = 'Количество ингредиентов'
         verbose_name_plural = 'Количество ингредиентов'
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
-                name='amount_ingredient',
+                name='unique_ingredient',
             )
         ]
 

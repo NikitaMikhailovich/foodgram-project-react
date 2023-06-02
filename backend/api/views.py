@@ -42,7 +42,7 @@ class UsersViewSet(UserViewSet):
         pagination_class=LimitPaginator,
     )
     def subscriptions(self, request):
-        user = request.user
+        user = self.request.user
         queryset = Follow.objects.filter(user=user)
         page = self.paginate_queryset(queryset)
         serializer = FollowSerializer(
@@ -51,20 +51,29 @@ class UsersViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=['POST', 'DELETE'], detail=False,
+        methods=['POST', 'DELETE'], detail=True,
         permission_classes=(IsAuthenticated,),
     )
-    def subsribe(self, request, pk):
+    def subscribe(self, request, id):
         user = request.user
-        author = get_object_or_404(User, pk=pk)
+        # author = get_object_or_404(User, pk=pk)
+        author = get_object_or_404(User, id=id)
         if request.method == 'POST':
+            # serializer = FollowSerializer(
+            #                               data=request.data,
+            #                               context={'request': request})
+            # serializer.is_valid(raise_exception=True)
+            # # serializer.save(user=user, author=author)
+            # Follow.objects.create(user=user, author=author)
+            # return Response(
+            #     serializer.data, status=status.HTTP_201_CREATED)
             serializer = FollowSerializer(
-                request.data, context={'request': request}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save(user=user, author=author)
+                    Follow.objects.create(user=user, author=author),
+                    context={'request': request},
+                )
             return Response(
-                serializer.data, status=status.HTTP_201_CREATED)
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
         Follow.objects.filter(user=user, author=author).delete()
         return Response('Успешная отписка', status=status.HTTP_204_NO_CONTENT)
 
@@ -120,7 +129,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['POST', 'DELETE'], detail=True,
         permission_class=(IsAuthenticated,),
     )
-    def favoirite(self, request, **kwargs):
+    def favorite(self, request, **kwargs):
         return self.post_delete_recipe(
             request, kwargs.pop('pk'), FavoriteReceipe)
 
