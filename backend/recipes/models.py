@@ -97,7 +97,7 @@ class Recipe(models.Model):
 
 
 class IngredientInRecipesAmount(models.Model):
-    
+
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,

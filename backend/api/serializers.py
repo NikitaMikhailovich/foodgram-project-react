@@ -1,6 +1,7 @@
 import base64
 from django.core.files.base import ContentFile
 from foodgram.settings import ZERO_MIN_VALUE
+
 from rest_framework.serializers import (ModelSerializer, ValidationError,
                                         PrimaryKeyRelatedField, ReadOnlyField,
                                         SerializerMethodField, ImageField,
@@ -150,10 +151,8 @@ class FollowSerializer(ModelSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        print('SUBSCRIBE'*100)
-        print(obj)
         return Follow.objects.filter(user=obj.user, author=obj.author).exists()
-    
+
     def validate(self, data):
         author = self.instance
         user = self.context.get('request').user
@@ -297,8 +296,6 @@ class RecipesWriteSerializer(ModelSerializer):
                     'Ингредиенты должны быть уникальными'
                 })
             ingredients_list.append(ingredient_id)
-            print('INGR'*50)
-            print(ingredient)
             amount = ingredient['amount']
             if int(amount) == ZERO_MIN_VALUE:
                 raise ValidationError({
@@ -311,7 +308,6 @@ class RecipesWriteSerializer(ModelSerializer):
         return data
 
     def create_update_ingredient(self, ingredients, recipe):
-        print("CREATE"*100)
         IngredientInRecipesAmount.objects.bulk_create(
             [IngredientInRecipesAmount(
                 ingredient=ingredient.get('id'),
@@ -321,8 +317,6 @@ class RecipesWriteSerializer(ModelSerializer):
         )
 
     def create(self, validated_data):
-        print("ALARM"*100)
-        print(validated_data)
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('recipe')
         user = self.context.get('request').user

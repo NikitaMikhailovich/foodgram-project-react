@@ -69,12 +69,12 @@ class UsersViewSet(UserViewSet):
             # return Response(
             #     serializer.data, status=status.HTTP_201_CREATED)
             serializer = FollowSerializer(
-                    Follow.objects.create(user=user, author=author),
-                    context={'request': request},
-                )
+                Follow.objects.create(user=user, author=author),
+                context={'request': request},
+            )
             return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
+                serializer.data, status=status.HTTP_201_CREATED
+            )
         Follow.objects.filter(user=user, author=author).delete()
         return Response('Успешная отписка', status=status.HTTP_204_NO_CONTENT)
 
@@ -89,8 +89,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipesReadSerializer
-        print("ALARM"*100)
-        print(self.request)
         return RecipesWriteSerializer
 
     def post_delete_recipe(self, request, pk, model):
@@ -125,7 +123,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     {'errors': 'Рецепт уже удален!'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-    
+
     @action(
         methods=['POST', 'DELETE'], detail=True,
         permission_class=(IsAuthenticated,),
@@ -166,4 +164,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = ingredients.annotate(amount_sum=Sum('amount'))
         ingredients = ingredients.order_by('ingredient__name')
         return shopping_cart_file(ingredients)
-
