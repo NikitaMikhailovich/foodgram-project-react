@@ -23,5 +23,3 @@ class Command(BaseCommand):
                 except IntegrityError:
                     print(f'Ингредиент {name} {measurement_unit}'
                           f' есть в базе')
-
-# python manage.py file_name

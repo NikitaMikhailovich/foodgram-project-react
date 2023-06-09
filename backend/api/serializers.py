@@ -4,7 +4,7 @@ from foodgram.settings import ZERO_MIN_VALUE
 from rest_framework.serializers import (ModelSerializer, ValidationError,
                                         PrimaryKeyRelatedField, ReadOnlyField,
                                         SerializerMethodField, ImageField,
-                                        IntegerField)
+                                        )
 
 from recipes.models import IngredientInRecipesAmount, Ingredient, Recipe, Tag
 from users.models import User, Follow
@@ -18,7 +18,7 @@ class IngredientSerializer(ModelSerializer):
 
 class IngredientsInRecipeReadSerializer(ModelSerializer):
 
-    amount = ReadOnlyField(source='ingredient.amount')
+    # amount = ReadOnlyField(source='ingredient.amount')
     id = ReadOnlyField(source='ingredient.id')
     name = ReadOnlyField(source='ingredient.name')
     measurement_unit = ReadOnlyField(
@@ -173,7 +173,8 @@ class FollowSerializer(ModelSerializer):
     #     if user is None or user.is_anonymous:
     #         return False
     #     # return user.follower.filter(user=obj).exists()
-    #     return Follow.objects.filter(user=obj.user, author=obj.author).exists()
+    #     return Follow.objects.filter(user=obj.user,
+    #  author=obj.author).exists()
     #     # return Follow.objects.filter(user=user, author=obj).exists()
 
     def get_recipes_count(self, obj):
@@ -257,7 +258,8 @@ class RecipesReadSerializer(ModelSerializer):
 
 class RecipesWriteSerializer(ModelSerializer):
     tags = PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
-    ingredients = IngredientsInRecipeWriteSerializer(many=True)
+    ingredients = IngredientsInRecipeWriteSerializer(many=True,
+                                                     source='recipe')
     image = Base64ImageField()
 
     class Meta:
@@ -276,7 +278,7 @@ class RecipesWriteSerializer(ModelSerializer):
         read_only_fields = ('author',)
 
     def validate(self, data):
-        ingredients = data['ingredients']
+        ingredients = data['recipe']
         tags = data['tags']
         cooking_time = data['cooking_time']
         ingredients_list = []
@@ -322,11 +324,9 @@ class RecipesWriteSerializer(ModelSerializer):
         print("ALARM"*100)
         print(validated_data)
         tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredients')
+        ingredients = validated_data.pop('recipe')
         user = self.context.get('request').user
         recipe = Recipe.objects.create(author=user, **validated_data)
-        # recipe = Recipe.objects.create(author=user, ingredients={ingredient.get("id") for ingredient in ingredients} **validated_data)
-        # recipe.ingredients.set({ingredient.get("id") for ingredient in ingredients}) # TODO: 
         recipe.tags.set(tags)
         self.create_update_ingredient(ingredients, recipe)
         return recipe
@@ -335,7 +335,7 @@ class RecipesWriteSerializer(ModelSerializer):
         tags = validated_data.pop('tags')
         instance.tags.clear()
         instance.tags.set(tags)
-        ingredients = validated_data.pop('ingredients')
+        ingredients = validated_data.pop('recipe')
         instance.ingredients.clear()
         self.create_update_ingredient(ingredients, instance)
         return super().update(instance, validated_data)

@@ -1,5 +1,5 @@
 from django.shortcuts import HttpResponse
-from rest_framework import response
+
 
 def shopping_cart_file(ingredients):
 
@@ -16,4 +16,4 @@ def shopping_cart_file(ingredients):
         response[
             'Content-Disposition'
         ] = 'attachment; filename="shopping_cart.txt"'
-        return response
+    return response

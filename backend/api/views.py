@@ -6,6 +6,7 @@ from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+# from django.shortcuts import HttpResponse
 
 from recipes.models import (IngredientInRecipesAmount, FavoriteReceipe,
                             Ingredient, Recipe, ShoppingCart, Tag)
@@ -145,11 +146,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_class=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        ingredients = IngredientInRecipesAmount.objects.filter(
+        # ingredients = IngredientInRecipesAmount.objects.filter(
+        #     recipe__shopping_recipes__user=request.user
+        # )
+        # ingredients = ingredients.values(
+        #     'ingredient__name', 'ingredient__measurement_unit'
+        # )
+        # ingredients = ingredients.annotate(amount_sum=Sum('amount'))
+        # return shopping_cart_file(ingredients)
+        ingredients = IngredientInRecipesAmount.objects.select_related(
+            'recipe', 'ingredient'
+        )
+        ingredients = ingredients.filter(
             recipe__shopping_recipes__user=request.user
         )
         ingredients = ingredients.values(
             'ingredient__name', 'ingredient__measurement_unit'
         )
         ingredients = ingredients.annotate(amount_sum=Sum('amount'))
+        ingredients = ingredients.order_by('ingredient__name')
         return shopping_cart_file(ingredients)
+
