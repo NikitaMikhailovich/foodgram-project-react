@@ -104,28 +104,6 @@ class ShoppingListFavoiriteSerializer(ModelSerializer):
 
 
 class FollowSerializer(ModelSerializer):
-    # email = ReadOnlyField(source='following.email')
-    # username = ReadOnlyField(source='following.username')
-    # first_name = ReadOnlyField(source='following.first_name')
-    # last_name = ReadOnlyField(source='following.last_name')
-    # id = ReadOnlyField(source='following.id')
-
-    # recipes = SerializerMethodField()
-    # recipes_count = SerializerMethodField()
-    # is_subscribed = SerializerMethodField()
-
-    # class Meta:
-    #     model = Follow
-    #     fields = (
-    #         'email',
-    #         'id',
-    #         'username',
-    #         'first_name',
-    #         'last_name',
-    #         'is_subscribed',
-    #         'recipes',
-    #         'recipes_count'
-    #     )
     email = ReadOnlyField(source='author.email')
     id = ReadOnlyField(source='author.id')
     username = ReadOnlyField(source='author.username')

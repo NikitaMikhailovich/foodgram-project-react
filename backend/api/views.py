@@ -6,7 +6,6 @@ from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-# from django.shortcuts import HttpResponse
 
 from recipes.models import (IngredientInRecipesAmount, FavoriteReceipe,
                             Ingredient, Recipe, ShoppingCart, Tag)
@@ -59,14 +58,6 @@ class UsersViewSet(UserViewSet):
         user = request.user
         author = get_object_or_404(User, id=id)
         if request.method == 'POST':
-            # serializer = FollowSerializer(
-            #                               data=request.data,
-            #                               context={'request': request})
-            # serializer.is_valid(raise_exception=True)
-            # # serializer.save(user=user, author=author)
-            # Follow.objects.create(user=user, author=author)
-            # return Response(
-            #     serializer.data, status=status.HTTP_201_CREATED)
             serializer = FollowSerializer(
                 Follow.objects.create(user=user, author=author),
                 context={'request': request},
@@ -143,14 +134,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_class=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        # ingredients = IngredientInRecipesAmount.objects.filter(
-        #     recipe__shopping_recipes__user=request.user
-        # )
-        # ingredients = ingredients.values(
-        #     'ingredient__name', 'ingredient__measurement_unit'
-        # )
-        # ingredients = ingredients.annotate(amount_sum=Sum('amount'))
-        # return shopping_cart_file(ingredients)
         ingredients = IngredientInRecipesAmount.objects.select_related(
             'recipe', 'ingredient'
         )

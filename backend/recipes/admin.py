@@ -32,7 +32,7 @@ class AmountIngredientAdmin(admin.ModelAdmin):
 class IngredientInRecipesAmountInline(admin.TabularInline):
     model = IngredientInRecipesAmount
     extra = 1
-    min_num = 2
+    min_num = 1
 
 
 @admin.register(Recipe)
