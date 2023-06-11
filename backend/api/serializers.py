@@ -19,7 +19,6 @@ class IngredientSerializer(ModelSerializer):
 
 class IngredientsInRecipeReadSerializer(ModelSerializer):
 
-    # amount = ReadOnlyField(source='ingredient.amount')
     id = ReadOnlyField(source='ingredient.id')
     name = ReadOnlyField(source='ingredient.name')
     measurement_unit = ReadOnlyField(
@@ -34,7 +33,6 @@ class IngredientsInRecipeReadSerializer(ModelSerializer):
             'measurement_unit',
             'amount'
         )
-        # fields = '__all__'
 
 
 class Base64ImageField(ImageField):
