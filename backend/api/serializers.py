@@ -1,14 +1,13 @@
 import base64
+
 from django.core.files.base import ContentFile
-from foodgram.settings import ZERO_MIN_VALUE
-
-from rest_framework.serializers import (ModelSerializer, ValidationError,
+from rest_framework.serializers import (ImageField, ModelSerializer,
                                         PrimaryKeyRelatedField, ReadOnlyField,
-                                        SerializerMethodField, ImageField,
-                                        )
+                                        SerializerMethodField, ValidationError)
 
-from recipes.models import IngredientInRecipesAmount, Ingredient, Recipe, Tag
-from users.models import User, Follow
+from foodgram.settings import ZERO_MIN_VALUE
+from recipes.models import Ingredient, IngredientInRecipesAmount, Recipe, Tag
+from users.models import Follow, User
 
 
 class IngredientSerializer(ModelSerializer):
