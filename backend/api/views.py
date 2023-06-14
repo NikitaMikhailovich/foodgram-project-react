@@ -2,7 +2,7 @@ from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from rest_framework import filters, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -12,7 +12,7 @@ from recipes.models import (FavoriteReceipe, Ingredient,
                             Tag)
 from users.models import Follow, User
 
-from .filters import RecipeFilter
+from .filters import RecipeFilter, IngredientFilter
 from .pagination import LimitPaginator
 from .permission import OwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
@@ -30,7 +30,7 @@ class TagsViewSet(viewsets.ModelViewSet):
 class IngredientsViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = [IngredientFilter]
     search_fields = ('^name', )
 
 

@@ -83,7 +83,7 @@ class UserCreateSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'email', 'username',
+            'id', 'email', 'username',
             'first_name', 'last_name', 'password',)
 
 
@@ -141,28 +141,8 @@ class FollowSerializer(ModelSerializer):
             )
         return data
 
-    # def get_is_subscribed(self, obj):
-
-    #     user = self.context.get('request').user
-    #     if user is None or user.is_anonymous:
-    #         return False
-    #     # return user.follower.filter(user=obj).exists()
-    #     return Follow.objects.filter(user=obj.user,
-    #  author=obj.author).exists()
-    #     # return Follow.objects.filter(user=user, author=obj).exists()
-
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()
-
-    # def to_representation(self, instance):
-        # data = super().to_representation(instance)
-        # data = {}
-        # request = self.context.get('request')
-        # query_params = request.query_params
-        # if 'recipes_limit' in query_params:
-        #     recipes_limit = query_params['recipes_limit']
-        #     data['recipes'] = data['recipes'][:int(recipes_limit)]
-        # return data
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -248,7 +228,6 @@ class RecipesWriteSerializer(ModelSerializer):
             'text',
             'cooking_time',
         )
-        # fields = '__all__'
         read_only_fields = ('author',)
 
     def validate(self, data):
