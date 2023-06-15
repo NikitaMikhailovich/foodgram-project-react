@@ -15,6 +15,13 @@ http://51.250.111.89
 ```sh
 http://51.250.111.89/recipes
 ```
+Почта/пароль от админ зоны:
+```sh
+ytrewq@mail.ru
+```
+```sh
+ytrewq1234
+```
 
 
 ![Бейдж о статусе работы workflow](https://github.com/NikitaMikhailovich/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
