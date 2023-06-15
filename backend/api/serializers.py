@@ -1,7 +1,7 @@
 import base64
 
 from django.core.files.base import ContentFile
-from rest_framework.serializers import (ImageField, ModelSerializer,
+from rest_framework.serializers import (ImageField, ModelSerializer, CharField,
                                         PrimaryKeyRelatedField, ReadOnlyField,
                                         SerializerMethodField, ValidationError)
 
@@ -215,7 +215,7 @@ class RecipesWriteSerializer(ModelSerializer):
     ingredients = IngredientsInRecipeWriteSerializer(many=True,
                                                      source='recipe')
     image = Base64ImageField()
-
+    name = CharField()
     class Meta:
         model = Recipe
         fields = (
@@ -234,7 +234,7 @@ class RecipesWriteSerializer(ModelSerializer):
         ingredients = data['recipe']
         tags = data['tags']
         cooking_time = data['cooking_time']
-        ingredients_list = []
+        ingredients_list = []        
         if not ingredients:
             raise ValidationError({
                 'Укажите ингредиенты!'
@@ -242,7 +242,7 @@ class RecipesWriteSerializer(ModelSerializer):
         if not tags:
             raise ValidationError({
                 'Укажите тэг!'
-            })
+            })      
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
             if ingredient_id in ingredients_list:
@@ -261,6 +261,13 @@ class RecipesWriteSerializer(ModelSerializer):
             })
         return data
 
+    def validate_name(self, value):
+        if len(value) > 200:
+            raise ValidationError({
+                'Название рецепта должно содержать не более 200 символов!'
+            })
+        return value
+    
     def create_update_ingredient(self, ingredients, recipe):
         IngredientInRecipesAmount.objects.bulk_create(
             [IngredientInRecipesAmount(
