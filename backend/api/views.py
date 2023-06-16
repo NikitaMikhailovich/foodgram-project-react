@@ -11,7 +11,6 @@ from recipes.models import (FavoriteReceipe, Ingredient,
                             IngredientInRecipesAmount, Recipe, ShoppingCart,
                             Tag)
 from users.models import Follow, User
-
 from .filters import RecipeFilter, IngredientFilter
 from .pagination import LimitPaginator
 from .permission import OwnerOrReadOnly

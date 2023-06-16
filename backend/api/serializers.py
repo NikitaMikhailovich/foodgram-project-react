@@ -237,36 +237,36 @@ class RecipesWriteSerializer(ModelSerializer):
         cooking_time = data['cooking_time']
         ingredients_list = []
         if not ingredients:
-            raise ValidationError({
+            raise ValidationError(
                 'Укажите ингредиенты!'
-            })
+            )
         if not tags:
-            raise ValidationError({
+            raise ValidationError(
                 'Укажите тэг!'
-            })
+            )
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
             if ingredient_id in ingredients_list:
-                raise ValidationError({
+                raise ValidationError(
                     'Ингредиенты должны быть уникальными'
-                })
+                )
             ingredients_list.append(ingredient_id)
             amount = ingredient['amount']
             if int(amount) == ZERO_MIN_VALUE:
-                raise ValidationError({
+                raise ValidationError(
                     'Количество ингридиента не может быть = 0'
-                })
+                )
         if int(cooking_time) == ZERO_MIN_VALUE:
-            raise ValidationError({
+            raise ValidationError(
                 'Время приготовления не может быть = 0!'
-            })
+            )
         return data
 
     def validate_name(self, value):
         if len(value) > 200:
-            raise ValidationError({
+            raise ValidationError(
                 'Название рецепта должно содержать не более 200 символов!'
-            })
+            )
         return value
 
     def create_update_ingredient(self, ingredients, recipe):
