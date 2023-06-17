@@ -5,7 +5,7 @@ from rest_framework.serializers import (ImageField, ModelSerializer, CharField,
                                         PrimaryKeyRelatedField, ReadOnlyField,
                                         SerializerMethodField, ValidationError)
 
-from foodgram.settings import ZERO_MIN_VALUE
+from foodgram.settings import MIN_VALIDATE_VALUE
 from recipes.models import Ingredient, IngredientInRecipesAmount, Recipe, Tag
 from users.models import Follow, User
 
@@ -252,13 +252,13 @@ class RecipesWriteSerializer(ModelSerializer):
                 )
             ingredients_list.append(ingredient_id)
             amount = ingredient['amount']
-            if int(amount) == ZERO_MIN_VALUE:
+            if int(amount) < MIN_VALIDATE_VALUE:
                 raise ValidationError(
-                    'Количество ингридиента не может быть = 0'
+                    'Количество ингридиента должно быть больше 0'
                 )
-        if int(cooking_time) == ZERO_MIN_VALUE:
+        if int(cooking_time) < MIN_VALIDATE_VALUE:
             raise ValidationError(
-                'Время приготовления не может быть = 0!'
+                'Время приготовления должно быть больше 0!'
             )
         return data
 

@@ -111,7 +111,7 @@ class IngredientInRecipesAmount(models.Model):
         verbose_name='Ингредиент',
     )
 
-    amount = models.PositiveSmallIntegerField(
+    amount = models.IntegerField(
         verbose_name='Количество',
         help_text='Необходимое количество данного ингредиента',
     )

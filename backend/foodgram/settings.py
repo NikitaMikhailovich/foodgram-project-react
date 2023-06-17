@@ -144,4 +144,4 @@ DJOSER = {
     },
 }
 
-ZERO_MIN_VALUE = 0
+MIN_VALIDATE_VALUE = 1
